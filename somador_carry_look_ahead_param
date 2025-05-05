@@ -1,0 +1,30 @@
+module somador_carry_look_ahead_param #(
+  parameter N = 4 // Número de bits (padrão = 4)
+)(
+  input  [N-1:0] A,     // Entrada A
+  input  [N-1:0] B,     // Entrada B
+  input         C_in,  // Carry-in
+  output [N-1:0] S,     // Soma
+  output        C_out  // Carry-out
+);
+
+  wire [N-1:0] G;       // Carry generate
+  wire [N-1:0] P;       // Carry propagate
+  wire [N:0]   C;       // Carries intermediários
+
+  assign C[0] = C_in;
+
+  assign G = A & B;
+  assign P = A | B;
+
+  genvar i;
+  generate
+    for (i = 0; i < N; i = i + 1) begin : carry_calc
+      assign C[i+1] = G[i] | (P[i] & C[i]);
+    end
+  endgenerate
+
+  assign S = A ^ B ^ C[N-1:0];
+  assign C_out = C[N];
+
+endmodule
