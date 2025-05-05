@@ -1,0 +1,43 @@
+// Módulo verilog do somador de 4-bits com carry look-ahead
+
+module carry_look_ahead_adder (
+  input [3:0] A,
+ input [3:0] B,
+ //! Entrada A (4 bits)
+ //! Entrada B (4 bits)
+  input C_in, //! Carry inicial
+  output [3:0] S,
+  output
+ //! Soma final (4 bits)
+ C_out //! Carry final
+  );
+ 
+  // Sinais intermediários para Carry-Generate (G) e
+ Carry-Propagate (P)
+  wire [3:0] G; //! Carry-Generate
+  wire [3:0] P; //! Carry-Propagate
+  wire [4:0] C; //! Carry intermediário (C[0] = C_in, C[4] =
+ C_out)
+ 
+  // Associar o Carry de entrada
+  assign C[0] = C_in;
+ 
+
+ 
+ // Calcular G e P
+  assign G = A & B; // G_i = A_i AND B_i
+  assign P = A | B; // P_i = A_i OR B_i
+ 
+  // Calcular os carries intermediários
+  assign C[1] = G[0] | (P[0] & C[0]);
+  assign C[2] = G[1] | (P[1] & C[1]);
+  assign C[3] = G[2] | (P[2] & C[2]);
+  assign C[4] = G[3] | (P[3] & C[3]);
+ 
+  // Calcular a soma
+  assign S = A ^ B ^ C[3:0]; // S_i = A_i XOR B_i XOR C_i
+ 
+  // Associar o Carry final
+  assign C_out = C[4];
+ 
+  endmodule
