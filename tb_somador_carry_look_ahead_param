@@ -1,0 +1,38 @@
+`timescale 1ns / 1ps
+
+module tb_somador;
+
+  // Parâmetro
+  parameter N = 4;
+
+  // Entradas
+  reg [N-1:0] A, B;
+  reg C_in;
+
+  // Saídas
+  wire [N-1:0] S;
+  wire C_out;
+
+  // Instanciar o DUT (Device Under Test)
+  somador_carry_look_ahead_param #(.N(N)) DUT (
+    .A(A),
+    .B(B),
+    .C_in(C_in),
+    .S(S),
+    .C_out(C_out)
+  );
+
+  initial begin
+    // Exibir sinais no terminal
+    $monitor("A=%b B=%b C_in=%b => S=%b C_out=%b", A, B, C_in, S, C_out);
+
+    // Estímulos
+    A = 4'b0001; B = 4'b0010; C_in = 0; #10;
+    A = 4'b0101; B = 4'b0011; C_in = 0; #10;
+    A = 4'b1111; B = 4'b0001; C_in = 0; #10;
+    A = 4'b1111; B = 4'b0001; C_in = 1; #10;
+    A = 4'b1010; B = 4'b0101; C_in = 0; #10;
+    $finish;
+  end
+
+endmodule
