@@ -1,0 +1,51 @@
+//ULA descrição comportamental
+  
+  module UlaCompleta (
+  input [3:0] A,// Operando A
+  input [3:0] B, // Operando B
+  input [3:0] seletor, // Sinal de seleção (3 bits)
+ // input clk,
+  output reg [3:0] resultado, // Resultado da operação
+  output C,V,Z,N // Resultado da operação
+  );
+  
+  
+	always @(*) begin 
+		C=0;
+		V=0;
+		Z=0;
+		N=0;
+		
+		case (seletor)
+		4'b0000: resultado = A & B;  // Operação AND
+		4'b0001: resultado = A | B; // Operação OR
+		4'b0010: resultado = ~A;  // Operação NOT
+ 
+ //(aplica-se apenas ao operando A)
+		4'b0011: resultado = ~(A & B);  // Operação NAND
+		
+		
+	//	4'b0111: resultado = A << 1 ;  //Shift pra esquerda lógico
+	//	4'b1000: resultado = A >> 1 ;  //Shift pra direita lógico 
+	//utilizar o valor presente no operando B como o número
+ //de deslocamentos a ser executado sobre o operando A
+		4'b0100: begin
+		 (C,resultado)= A+B;
+		 V= [~A(3) & ~B(3) & resultado(3)  | A(3) & B(3) & ~resultado(3) ]; 
+		 end
+		 
+		 // 
+		 4'b0101: begin
+		 (C,resultado)= A-B;
+		  V= [~A(3) & ~B(3) & resultado(3)  | A(3) & B(3) & ~resultado(3)]; 
+		 end
+		 
+		4'b0111: resultado = A << (B> 4 ? 4:B) ;  //Shift pra e
+		4'b1000: resultado = A >> (B> 4 ? 4:B) ;  //Shift
+		default: resultado = 4'b0000;   // Operação padrão zero
+		 
+		
+			endcase
+		end
+  endmodule
+  
