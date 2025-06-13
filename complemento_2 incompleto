@@ -1,0 +1,61 @@
+//Elaborar um testbench para o multiplicador complemento de 2 
+//usando +5/8 e -3/8 como operandos. Usar um clock com período de 
+//20 ns. Fazer St = 1 em 2 ns e St = 0 um período de clock depois. 
+//Execute a simulação por 120 ns. A tabela abaixo mostra os resultados 
+//esperados:
+
+module mult_fsm (
+    input clk,
+    input St,
+    input reset,
+    input [3:0]Mplier,Mcand,
+    input [3:0] A,B,
+    output reg [1:0] Done
+);
+
+    // Codificação dos estados
+    parameter S0 = 0,
+              S1 = 1,
+              S2 = 2,
+              S3 = 3,
+              S4 = 4,
+              S5 = 5;
+
+    reg [2:0] state, next_state;
+	reg M,addout;
+
+    // Estado atual
+    always @(posedge clk or posedge reset) begin
+        if (reset)
+            state <= S0;
+        else
+            state <= next_state;
+    end
+
+    // Lógica de transição de estados
+    always @(*) begin
+        case (state)
+			
+			
+           
+			 S0: if(St == 1) begin 
+				 
+				 A=4'b0000; // começa o ciclo
+				 B=Mplier; //load o multiplicador
+				 next_state = S1; 
+			
+			end	else begin
+					next_state = S0; 
+		    end
+			
+            S1,S2,S3: 
+					   if (M == 1) begin
+						   addout = A + Mcand;  // add multiplicando a A e realizando shift
+						   A= {Mcand[3],addout[3:1]}; //concatena 
+						   B= {addout[0],B[3:1]};
+						   
+						end else begin
+						   A= {A[3],A[3:1]}; //right shift
+						   B= {A[0],B[3:1]};
+						end
+							
